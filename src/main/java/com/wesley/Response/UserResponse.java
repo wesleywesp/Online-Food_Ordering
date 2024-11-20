@@ -12,7 +12,7 @@ public record UserResponse(Long id,String fullname, String email, USER_ROLE role
                            List<Address> addresses) {
 
     public UserResponse(User user) {
-        this(user.getId(), user.getFullName(), user.getEmail(), user.getRole(), user.getFavoriteRestaurants(), user.getAddresses());
+        this(user.getId(), user.getFullName(), user.getEmail(), user.getRole(), user.getFavorites(), user.getAddresses());
     }
 }
 

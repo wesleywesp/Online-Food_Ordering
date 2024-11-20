@@ -1,5 +1,7 @@
 package com.wesley.service;
 
+import com.wesley.Response.IngredientICategoryResponse;
+import com.wesley.Response.IngredientItemResponse;
 import com.wesley.model.IngredientCategory;
 import com.wesley.model.IngredientsItem;
 import com.wesley.model.Restaurant;
@@ -37,9 +39,10 @@ public class IngredientsServiceImplemetion implements IngredientsService {
     }
 
     @Override
-    public List<IngredientCategory> findIngredientCategoryByRestaurantId(Long restaurantId) throws Exception {
+    public List<IngredientICategoryResponse> findIngredientCategoryByRestaurantId(Long restaurantId) throws Exception {
         Restaurant restaurant = restauranteService.getRestaurantById(restaurantId);
-        return ingredientCategoryRepository.findByRestaurantId(restaurant.getId());
+        List<IngredientCategory> category= ingredientCategoryRepository.findByRestaurantId(restaurantId);
+        return category.stream().map(IngredientICategoryResponse::new).toList();
     }
 
     @Override
@@ -55,9 +58,10 @@ public class IngredientsServiceImplemetion implements IngredientsService {
     }
 
     @Override
-    public List<IngredientsItem> findRestaurantIngredients(Long restaurantId) throws Exception {
+    public List<IngredientItemResponse> findRestaurantIngredients(Long restaurantId) throws Exception {
         Restaurant restaurant = restauranteService.getRestaurantById(restaurantId);
-        return ingredientItemRepository.findByRestaurantId(restaurant.getId());
+       List<IngredientsItem>item =ingredientItemRepository.findByRestaurantId(restaurantId);
+       return item.stream().map(IngredientItemResponse::new).toList();
     }
 
     @Override

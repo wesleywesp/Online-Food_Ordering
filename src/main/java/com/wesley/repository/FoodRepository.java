@@ -10,7 +10,11 @@ import java.util.List;
 
 @Repository
 public interface FoodRepository extends JpaRepository<Food, Long> {
+    @Query("SELECT f FROM Food f JOIN FETCH f.foodCategory fc JOIN FETCH fc.restaurant WHERE f.restaurant.id = :restaurantId")
     List<Food> findByRestaurantId(Long restaurantId);
+
+
+
 
     @Query("SELECT f FROM Food f WHERE lower(f.name) LIKE lower(concat('%', :keyword, '%')) " +
             "OR lower(f.foodCategory) LIKE lower(concat('%', :keyword, '%'))")

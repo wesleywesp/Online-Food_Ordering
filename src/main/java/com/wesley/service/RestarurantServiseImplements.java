@@ -1,5 +1,6 @@
 package com.wesley.service;
 
+
 import com.wesley.dto.RestauranteDTO;
 import com.wesley.model.Address;
 import com.wesley.model.Restaurant;
@@ -34,26 +35,36 @@ public class RestarurantServiseImplements implements RestauranteService{
 
     }
 
+
     @Override
     public Restaurant updateRestaurant(Long restaurantId, CreateRestaurantRequest updatedRestaurante) throws Exception {
+        // Buscar restaurante existente
         Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId);
-        if(restaurant.getCusinetypes() != null) {
+        if (restaurant == null) {
+            throw new IllegalArgumentException("Restaurant not found with id: " + restaurantId);
+        }
+
+        // Atualizar apenas os campos que não são nulos no request
+        if (updatedRestaurante.cusineTypes() != null) {
             restaurant.setCusinetypes(updatedRestaurante.cusineTypes());
         }
-        if(restaurant.getDescription() != null) {
+        if (updatedRestaurante.description() != null) {
             restaurant.setDescription(updatedRestaurante.description());
         }
-        if(restaurant.getOpningHours() != null) {
+        if (updatedRestaurante.openingHours() != null) {
             restaurant.setOpningHours(updatedRestaurante.openingHours());
         }
-        if(restaurant.getImage() != null) {
+        if (updatedRestaurante.images() != null) {
             restaurant.setImage(updatedRestaurante.images());
         }
-        if(restaurant.getName() != null) {
+        if (updatedRestaurante.name() != null) {
             restaurant.setName(updatedRestaurante.name());
         }
+
+        // Salvar e retornar o restaurante atualizado
         return restaurantRepository.save(restaurant);
     }
+
 
     @Override
     public void deleteRestaurant(Long restaurantId) throws Exception {
@@ -104,11 +115,11 @@ public class RestarurantServiseImplements implements RestauranteService{
         RestauranteDTO restauranteDTO = new RestauranteDTO();
         restauranteDTO.setId(restaurant.getId());
         restauranteDTO.setDescription(restaurant.getDescription());
-        restauranteDTO.setTitle(restaurant.getName());
-        restauranteDTO.setImages(restaurant.getImage());
+        restauranteDTO.setName(restaurant.getName());
+        restauranteDTO.setImage(restaurant.getImage());
 
         boolean isFavorite = false;
-        List<RestauranteDTO> favoriteRestaurants = user.getFavoriteRestaurants();
+        List<RestauranteDTO> favoriteRestaurants = user.getFavorites();
 
         // Verifica se o restaurante já está nos favoritos
         for (RestauranteDTO favoriteRestaurant : favoriteRestaurants) {

@@ -11,7 +11,6 @@ import com.wesley.repository.CartRepository;
 import com.wesley.repository.UserRepository;
 import com.wesley.request.LoginRequest;
 import com.wesley.service.CustomerUserDetailService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -30,11 +29,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/auth")
-public class authcontroller {
+public class Authcontroller {
     @Autowired
     private UserRepository userRepository;
     @Autowired

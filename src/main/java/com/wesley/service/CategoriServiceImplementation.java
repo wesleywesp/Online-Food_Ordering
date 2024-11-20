@@ -15,16 +15,16 @@ public class CategoriServiceImplementation implements CategoriaService {
     @Autowired
     private RestauranteService restauranteService;
     @Override
-    public Category createCategory(String name, Long userId) throws Exception {
+    public Category createCategory(String name,String descripton, Long userId) throws Exception {
         Restaurant restaurant = restauranteService.getRestaurantById(userId);
-        Category category = new Category(name, restaurant);
+        Category category = new Category(name, descripton, restaurant);
         return categoryReposetory.save(category);
     }
 
     @Override
     public List<Category> findCategoryByRestaurantId(Long restaurantId) throws Exception {
         Restaurant restaurant = restauranteService.getRestaurantById(restaurantId);
-        return categoryReposetory.findByRestaurantId(restaurant.getId());
+        return categoryReposetory.findByRestaurantId(restaurantId);
     }
 
     @Override

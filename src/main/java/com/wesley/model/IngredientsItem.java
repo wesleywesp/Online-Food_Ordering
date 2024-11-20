@@ -16,10 +16,8 @@ public class IngredientsItem {
     private Long id;
 
     private String name;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private IngredientCategory category;
-
     @JsonIgnore
     @ManyToOne
     private Restaurant restaurant;
@@ -35,3 +33,4 @@ public class IngredientsItem {
 
 
 }
+

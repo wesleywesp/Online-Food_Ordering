@@ -1,5 +1,6 @@
 package com.wesley.service;
 
+import com.wesley.Response.FoodResponse;
 import com.wesley.model.Category;
 import com.wesley.model.Food;
 import com.wesley.model.Restaurant;
@@ -14,10 +15,10 @@ public interface FoodService {
     void deleteFood(Long foodId)throws Exception;
 
     public List<Food> getRestaurantsFood(Long restaurantId,
-                                         Boolean isVegetarian,
-                                         Boolean isNoveg,
-                                         Boolean isSeasonal,
-                                         String foodCategory);
+                                                 Boolean isVegetarian,
+                                                 Boolean isNoveg,
+                                                 Boolean isSeasonal,
+                                                 String foodCategory);
 
     public List<Food> searchFood(String keyword);
 

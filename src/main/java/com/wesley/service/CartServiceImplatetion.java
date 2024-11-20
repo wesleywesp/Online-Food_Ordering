@@ -25,26 +25,39 @@ public class CartServiceImplatetion implements CartService {
     public CartItem addCartItem(AddCartitemRequest request, String jwt) throws Exception {
         User user = userService.findUserByJwtToken(jwt);
         Food food = foodService.findFoodById(request.foodId());
+
+        // Encontrar o carrinho do usuário
         Cart cart = cartRepository.findByCustomerId(user.getId());
+
+        if (cart == null) {
+            // Se o carrinho não existir, crie um novo carrinho
+            cart = new Cart();
+            cart.setCustomer(user);
+            cart.setTotal(BigDecimal.ZERO);
+            cartRepository.save(cart);  // Salve o novo carrinho no banco de dados
+        }
 
         for(CartItem cartItem : cart.getItem()){
             if(cartItem.getFood().equals(food)){
-                 int updatedQuantity = cartItem.getQuantity() + request.quantity();
+                int updatedQuantity = cartItem.getQuantity() + request.quantity();
                 return updateCartItem(cartItem.getId(), updatedQuantity);
             }
         }
+
         CartItem cartItem = new CartItem();
         cartItem.setFood(food);
-        cartItem.setQuantity(request.quantity());
         cartItem.setCart(cart);
+        cartItem.setQuantity(request.quantity());
         cartItem.setTotalprice(BigDecimal.valueOf(request.quantity()).multiply(food.getPrice()));
         cartItem.setIngredients(request.ingredients());
+
         CartItem savedCartItem = carItemRepository.save(cartItem);
 
-        cart.getItem().add(savedCartItem);
-        return savedCartItem;
+        cart.getItem().add(savedCartItem);  // Adiciona o item no carrinho
 
+        return savedCartItem;
     }
+
 
     @Override
     public CartItem updateCartItem(Long cartitemId, Integer quantity) throws Exception {
@@ -52,6 +65,7 @@ public class CartServiceImplatetion implements CartService {
 
         cartItem.setQuantity(quantity);
         cartItem.setTotalprice(BigDecimal.valueOf(quantity).multiply(cartItem.getFood().getPrice()));
+
         return carItemRepository.save(cartItem);
     }
 

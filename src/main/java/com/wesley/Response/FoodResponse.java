@@ -8,32 +8,28 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public record FoodResponse(
+        Long id,
         String name,
         String description,
         BigDecimal price,
-
-        Category category,
-
-        List<String> imagem,
-
-        Long restaurantId,
-
-        boolean vegetarian,
-
-        boolean seasional,
-
-        List<IngredientsItem> ingredients,
-        boolean isAvailable
+        List<String> image,
+        Boolean vegetarian,
+        Boolean seasonal,
+        Boolean isAvailable,
+        List<IngredientsItem> ingredients
 ) {
+    // Construtor alternativo que aceita um objeto do tipo Food
     public FoodResponse(Food food) {
-        this(food.getName(), food.getDescription(), food.getPrice(), food.getFoodCategory(), food.getImage(),
-                food.getRestaurant().getId(), food.isIsvegetarian(), food.isSeasonal(), food.getIngredients()
-                , food.getAvailable());
-    }
-
-
-    public FoodResponse(Long id, String name, String description, Category foodCategory, List<String> image,
-                        boolean isvegetarian, boolean seasonal, Boolean available, BigDecimal price) {
-        this(name, description, price, foodCategory, image, id, isvegetarian, seasonal, List.of(), available);
+        this(
+                food.getId(),
+                food.getName(),
+                food.getDescription(),
+                food.getPrice(),
+                food.getImage(),
+                food.getVegetarian(),
+                food.getSeasonal(),
+                food.getAvailable(),
+                food.getIngredients()
+        );
     }
 }

@@ -1,10 +1,12 @@
 package com.wesley.controller;
 
 
+import com.wesley.Response.PaymentResponse;
 import com.wesley.model.Order;
 import com.wesley.model.OrderItem;
 import com.wesley.request.OrderRequest;
 import com.wesley.service.OrderService;
+import com.wesley.service.Paymentservice;
 import com.wesley.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import java.util.List;
 
 public class OrderController {
     @Autowired
+    private Paymentservice paymentservice;
+    @Autowired
     private OrderService orderService;
 
     @Autowired
@@ -29,15 +33,16 @@ public class OrderController {
 
     @PostMapping("/order")
     @Transactional
-    public ResponseEntity<Order> createOrder(@RequestBody OrderRequest request,
-                                             @RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<PaymentResponse> createOrder(@RequestBody OrderRequest request,
+                                                       @RequestHeader("Authorization") String token) throws Exception {
 
         Order order = orderService.createOrder(request, userService.findUserByJwtToken(token));
-        return new ResponseEntity<>(order, HttpStatus.OK);
+        PaymentResponse paymentResponse = paymentservice.createPaymentLink(order);
+        return new ResponseEntity<>(paymentResponse, HttpStatus.OK);
     }
 
     @GetMapping("/order/user")
-    public ResponseEntity<List<Order>> getOrderHistory(@RequestBody OrderRequest request,
+    public ResponseEntity<List<Order>> getOrderHistory(
                                              @RequestHeader("Authorization") String token) throws Exception {
         List<Order> orders = orderService.getUserOrder(userService.findUserByJwtToken(token).getId());
         return new ResponseEntity<>(orders, HttpStatus.OK);

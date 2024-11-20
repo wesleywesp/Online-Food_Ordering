@@ -1,8 +1,9 @@
 package com.wesley.controller;
 
+import com.wesley.Response.IngredientICategoryResponse;
+import com.wesley.Response.IngredientItemResponse;
 import com.wesley.model.IngredientCategory;
 import com.wesley.model.IngredientsItem;
-import com.wesley.model.User;
 import com.wesley.request.IngredientCategoryRequest;
 import com.wesley.request.IngredientItemRequest;
 import com.wesley.service.IngredientsService;
@@ -44,15 +45,15 @@ public class ingredientController {
         return ResponseEntity.ok(item);
     }
     @GetMapping("/restaurant/{id}")
-    public ResponseEntity<List<IngredientsItem>> getRestaurantIngredients(@PathVariable Long id) throws Exception {
+    public ResponseEntity<List<IngredientItemResponse>> getRestaurantIngredients(@PathVariable Long id) throws Exception {
 
-        List<IngredientsItem> items = ingredientsService.findRestaurantIngredients(id);
+        List<IngredientItemResponse> items = ingredientsService.findRestaurantIngredients(id);
 
         return ResponseEntity.ok().body(items);
     }
     @GetMapping("/restaurant/{id}/category")
-    public ResponseEntity<List<IngredientCategory>> getRestaurantIngredientCategory(@PathVariable Long id) throws Exception {
-        List<IngredientCategory> category = ingredientsService.findIngredientCategoryByRestaurantId(id);
+    public ResponseEntity<List<IngredientICategoryResponse>>getRestaurantIngredientCategory(@PathVariable Long id) throws Exception {
+        List<IngredientICategoryResponse> category = ingredientsService.findIngredientCategoryByRestaurantId(id);
 
         return ResponseEntity.ok().body(category);
     }

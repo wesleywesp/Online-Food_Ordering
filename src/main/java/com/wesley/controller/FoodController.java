@@ -36,32 +36,52 @@ public class FoodController {
 
     @GetMapping("/search")
     public ResponseEntity<List<FoodResponse>> searchFood(@RequestParam String foodName,
-                                                   @RequestHeader("Authorization") String token) throws Exception {
+                                                         @RequestHeader("Authorization") String token) throws Exception {
         User user = userService.findUserByJwtToken(token);
         List<Food> food =  foodService.searchFood(foodName);
         // Convertendo a lista de alimentos para FoodResponse
         List<FoodResponse> foodResponses = food.stream()
-                .map(f -> new FoodResponse(f.getId(), f.getName(), f.getDescription(), f.getFoodCategory(), f.getImage(),
-                        f.isIsvegetarian(),f.isSeasonal(),f.getAvailable(), f.getPrice()))
+                .map(f -> new FoodResponse(
+                        f.getId(),
+                        f.getName(),
+                        f.getDescription(),
+                        f.getPrice(),
+                        f.getImage(),
+                        f.getVegetarian(),
+                        f.getSeasonal(),
+                        f.getAvailable(),
+                        f.getIngredients() // Corrigido: adicionados os parênteses
+                ))
                 .collect(Collectors.toList());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(foodResponses);
     }
     @GetMapping("/restaurant/{restaurantId}")
     public ResponseEntity<List<FoodResponse>> getRestaurantFood(@PathVariable Long restaurantId,
-                                                               @RequestParam boolean veegetarian,
-                                                                @RequestParam boolean nonoveg,
-                                                                @RequestParam boolean seasonal,
-                                                               @RequestParam (required = false) String foodCategory,
-                                                               @RequestHeader("Authorization") String token) throws Exception {
+                                                                @RequestParam (required = false) boolean vegetarian,
+                                                                @RequestParam (required = false)boolean nonveg,
+                                                                @RequestParam (required = false)boolean seasonal,
+                                                                @RequestParam (required = false) String food_category,
+                                                                @RequestHeader("Authorization") String token) throws Exception {
         User user = userService.findUserByJwtToken(token);
 
-        List<Food> food =  foodService.getRestaurantsFood(restaurantId, veegetarian, nonoveg, seasonal, foodCategory);
+        List<Food> food =  foodService.getRestaurantsFood(restaurantId, vegetarian, nonveg, seasonal, food_category);
 
         // Convertendo a lista de alimentos para FoodResponse
         List<FoodResponse> foodResponses = food.stream()
-                .map(f -> new FoodResponse(f.getId(), f.getName(), f.getDescription(), f.getFoodCategory(), f.getImage(),
-                        f.isIsvegetarian(),f.isSeasonal(),f.getAvailable(), f.getPrice()))
+                .map(f -> new FoodResponse(
+                        f.getId(),
+                        f.getName(),
+                        f.getDescription(),
+                        f.getPrice(),
+                        f.getImage(),
+                        f.getVegetarian(),
+                        f.getSeasonal(),
+                        f.getAvailable(),
+                        f.getIngredients() // Corrigido: adicionados os parênteses
+                ))
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok().body(foodResponses);
     }
 }

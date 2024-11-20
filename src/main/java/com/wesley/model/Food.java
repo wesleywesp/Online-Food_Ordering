@@ -1,5 +1,6 @@
 package com.wesley.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wesley.request.CreateFoodRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,39 +18,49 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Food {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
-
     private String description;
-
     private BigDecimal price;
 
-    @Column(name = "image", length = 1000)
     @ElementCollection
-    private List<String> image;
+    @CollectionTable(name = "food_images", joinColumns = @JoinColumn(name = "food_id"))
+    @Column(name = "image_url")
+    private List<String> image = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category foodCategory;
 
-
     private Boolean available;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
 
-    private boolean isvegetarian;
-    private boolean isSeasonal;
+    private Boolean vegetarian;
+    private Boolean seasonal;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "food_ingredients",
+            joinColumns = @JoinColumn(name = "food_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+    )
     private List<IngredientsItem> ingredients = new ArrayList<>();
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
 
     public Food(CreateFoodRequest foodRequest, Category category, Restaurant restaurant) {
         this.name = foodRequest.name();
@@ -58,10 +69,9 @@ public class Food {
         this.image = foodRequest.imagem();
         this.foodCategory = category;
         this.restaurant = restaurant;
-        this.isvegetarian = foodRequest.vegetarian();
-        this.isSeasonal = foodRequest.seasional();
+        this.vegetarian = foodRequest.vegetarian();
+        this.seasonal = foodRequest.seasional();
         this.ingredients = foodRequest.ingredients();
         this.available = true;
     }
-
 }

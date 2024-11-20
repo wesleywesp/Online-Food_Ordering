@@ -27,7 +27,6 @@ public class Order {
 
     @ManyToOne
     private User customer;
-
     @JsonIgnore
     @ManyToOne
     private Restaurant restaurant;

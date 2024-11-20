@@ -44,21 +44,21 @@ public class RestaurantController {
         List<Restaurant> restaurant = restaurantService.getAllRestaurant();
         return ResponseEntity.ok().body(restaurant);
     }
-    @GetMapping("/restaurantid")
-    @Transactional
-    public ResponseEntity<Restaurant> findRestauranteById(@PathVariable Long id,
+    @GetMapping("/{restaurantId}")
+    public ResponseEntity<Restaurant> findRestauranteById(@PathVariable("restaurantId") Long restaurantId,
                                                                 @RequestHeader("Authorization") String token) throws Exception {
         User user = userService.findUserByJwtToken(token);
-        Restaurant restaurant = restaurantService.getRestaurantById(id);
+        Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
         return ResponseEntity.ok().body(restaurant);
     }
 
-    @PutMapping("/{id}/add-favorites")
+    @PutMapping("/{restaurantId}/add-favorites")
     @Transactional
-    public ResponseEntity<RestauranteDTO> addToFavarites(@PathVariable Long id,
+    public ResponseEntity<RestauranteDTO> addToFavarites(@PathVariable Long restaurantId,
                                                           @RequestHeader("Authorization") String token) throws Exception {
         User user = userService.findUserByJwtToken(token);
-        RestauranteDTO restaurant = restaurantService.addFavoriteRestaurant(id, user);
+        RestauranteDTO restaurant = restaurantService.addFavoriteRestaurant(restaurantId, user);
+
         return ResponseEntity.ok().body(restaurant);
     }
 

@@ -33,16 +33,32 @@ public class OrderServiceImplements implements OrderService {
 
     @Override
     public Order createOrder(OrderRequest orderRequest, User user) throws Exception {
-        Address shippAddress = orderRequest.deliveryAddress();
+        Address shippingAddress = orderRequest.deliveryAddress();
+        // Verificar se o endereço já existe
+        Address existingAddress = addressResponsitory.findByStreetAndCityAndStateAndZipCodeAndNumber(
+                shippingAddress.getStreet(),
+                shippingAddress.getCity(),
+                shippingAddress.getState(),
+                shippingAddress.getZipCode(),
+                shippingAddress.getNumber()
+        );
 
-        Address savedAddress = addressResponsitory.save(shippAddress);
-        if(!user.getAddresses().contains(savedAddress)){
-            user.getAddresses().add(savedAddress);
+        Address addressToUse;
+        if (existingAddress != null) {
+            addressToUse = existingAddress; // Usar o endereço existente
+        } else {
+            addressToUse = addressResponsitory.save(shippingAddress); // Criar novo endereço
+        }
+
+        // Associar o endereço ao usuário, se ainda não estiver associado
+        if (!user.getAddresses().contains(addressToUse)) {
+            user.getAddresses().add(addressToUse);
             userRepository.save(user);
         }
+
         Restaurant restaurant = restauranteService.getRestaurantById(orderRequest.restaurantId());
         Order createdOrder = new Order();
-        createdOrder.setDeliveryAddress(savedAddress);
+        createdOrder.setDeliveryAddress(addressToUse);
         createdOrder.setRestaurant(restaurant);
         createdOrder.setCustomer(user);
         createdOrder.setOrderStatus("PENDING");
@@ -50,29 +66,35 @@ public class OrderServiceImplements implements OrderService {
 
         Cart cart = cartService.findCartByUserId(user.getId());
         List<OrderItem> orderItems = new ArrayList<>();
-        for(CartItem cartItem : cart.getItem()){
+        for (CartItem cartItem : cart.getItem()) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(createdOrder);
+            orderItem.setFood(cartItem.getFood());
             orderItem.setIngredients(cartItem.getIngredients());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setTotalprice(cartItem.getTotalprice());
 
             OrderItem savedOrderItem = orderItemRepository.save(orderItem);
             orderItems.add(savedOrderItem);
-
         }
+
         createdOrder.setItems(orderItems);
         createdOrder.setTotalPrice(cart.getTotal());
+
+        // Configurar o totalAmount usando o totalPrice
+        if (createdOrder.getTotalPrice() != null) {
+            createdOrder.setTotalAmount(createdOrder.getTotalPrice());
+        } else {
+            throw new IllegalArgumentException("Total price is null, cannot create order.");
+        }
 
         Order savedOrder = orderRepository.save(createdOrder);
 
         restaurant.getOrders().add(savedOrder);
 
         return createdOrder;
-
-
-
     }
+
 
     @Override
     public Order updateOrder(Long orderId, String orderStatus) throws Exception {

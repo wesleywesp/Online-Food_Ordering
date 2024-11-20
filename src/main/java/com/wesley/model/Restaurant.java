@@ -1,5 +1,6 @@
 package com.wesley.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wesley.request.CreateRestaurantRequest;
 import jakarta.persistence.*;
@@ -42,6 +43,7 @@ public class Restaurant {
 
     private String opningHours;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders = new ArrayList<>();
 
@@ -49,7 +51,6 @@ public class Restaurant {
     private LocalDateTime registrationDate;
 
     private boolean open;
-
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Food>foods = new ArrayList<>();

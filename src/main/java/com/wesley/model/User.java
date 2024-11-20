@@ -32,7 +32,7 @@ public class User {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
     @ElementCollection
-    private List<RestauranteDTO>favoriteRestaurants = new ArrayList<>();
+    private List<RestauranteDTO>favorites = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();

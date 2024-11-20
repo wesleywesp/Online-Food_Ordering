@@ -18,14 +18,15 @@ public class Category {
     private Long id;
     private String name;
     private String description;
-
-    @ManyToOne
     @JsonIgnore
+    @ManyToOne
     private Restaurant restaurant;
 
-    public Category(String name, Restaurant restaurant) {
+    public Category(String name,  String descripton, Restaurant restaurant) {
         this.name = name;
         this.restaurant = restaurant;
+        this.description = descripton;
 
     }
+
 }
